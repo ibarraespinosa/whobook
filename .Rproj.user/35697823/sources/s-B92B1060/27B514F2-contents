@@ -1,0 +1,39 @@
+library(vein)
+V <- 0:120
+ef1 <- ef_ldv_speed(
+  v = "PC",
+  t = "4S", 
+  cc = "<=1400", 
+  f = "G",
+  eu = "PRE",
+  p = "CO", 
+  speed = Speed(V))
+ef2 <- unlist(lapply(seq_along(V), 
+                     function(i){
+                       ef_china(
+                         t = "Small", 
+                         f = "G", 
+                         standard = "PRE", 
+                         p = "CO", 
+                         speed = Speed(i))}))
+
+ef3 <- mean(ef_cetesb(p = "CO", veh = "PC_G")[35:40])
+plot(ef3)
+colplot(data.frame(Europe = ef1, 
+                   China = ef2, 
+                   brazil = rep(ef3, length(ef1))), 
+        main = "Emission factors light duty gasoline vehicles
+        Europe, China and Brazil Pre-Euro (g/km)",
+         y = "g/km")
+ 
+# add moves, HBEFA
+
+png("chapter3_fig_veh_ef.png", width = 2000, height = 1000, res = 300)
+colplot(data.frame(Europe = ef1, 
+                   China = ef2, 
+                   Brazil = rep(ef3, length(ef1))), 
+        main = "Emission factors light duty gasoline vehicles
+        Europe, China and Brazil Pre-Euro (g/km)",
+        y = "g/km")
+dev.off()
+ 
