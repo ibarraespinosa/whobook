@@ -1,0 +1,111 @@
+---
+title: "Solution_chap3"
+author: "Sergio Ibarra-Espinosa"
+date: "2024-03-09"
+output:
+  word_document: default
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1) Exercisice
+
+3.1) Using R, install the package vein and run the following script. The idea is to
+compare how the emission varies depending on speed. What can be
+concluded? Do the emission factors converge to some speed? Analyze different
+pollutants. The resulting emission factors give units of g/km. Then, multiply by
+different distances (your house to school/work, for instance) and estimate
+emissions.
+
+```{r}
+library(vein)
+ef1 <- ef_eea(category = "PC", 
+              fuel = "G",  
+              segment = "Small", 
+              euro = "III", 
+              tech = "GDI",  
+              pol = "NOx", 
+              mode = NA,
+              slope = 0, 
+              load = 0)
+
+ef2 <- ef_eea(category = "PC", 
+              fuel = "G",  
+              segment = "Small", 
+              euro = "I", 
+              tech = NA,  
+              pol = "NOx", 
+              mode = NA,
+              slope = 0, 
+              load = 0)
+df <- data.frame(EF_Euro_III = ef1(0:100), 
+                 EF_Euro_I = ef2(0:100))
+colplot(df, main = "NOx (g/km)" , xlab = "Speed (km/h)")
+```
+
+### What can be concluded? 
+
+> **_ANSWER:_**  On average, the vehicle Euro I emits more emissions 
+at low and high speeds. However, the Euro III 
+emits less emissions at higher and speeds. 
+This represent a scenario without stops and and flat terrain.
+
+
+### Do the emission factors converge to some speed? 
+
+> **_ANSWER:_**  Not in this case.
+
+
+### Analyze different pollutants. 
+
+
+```{r}
+library(vein)
+ef1 <- ef_eea(category = "PC", 
+              fuel = "G",  
+              segment = "Small", 
+              euro = "III", 
+              tech = "GDI",  
+              pol = "CO", 
+              mode = NA,
+              slope = 0, 
+              load = 0)
+
+ef2 <- ef_eea(category = "PC", 
+              fuel = "G",  
+              segment = "Small", 
+              euro = "I", 
+              tech = NA,  
+              pol = "CO", 
+              mode = NA,
+              slope = 0, 
+              load = 0)
+df <- data.frame(EF_Euro_III = ef1(0:100), 
+                 EF_Euro_I = ef2(0:100))
+colplot(df, main = "CO (g/km)", xlab = "Speed (km/h)")
+```
+
+> **_ANSWER:_**  When analyzing the CO emission factors, we see that lower
+speeds, the Euro I emits more pollution than Euro III. For instance,
+when the speed is lower than 10km/h, Euro I emits, 9 times more than a vehicle
+Euro III.
+
+
+### The resulting emission factors give units of g/km. Then, multiply by
+different distances (your house to school/work, for instance) and estimate
+emissions.
+
+
+> **_ANSWER:_**  If we asume that the distance between my school and 
+home is 1 km in a straight line, we commute in a gasoline vehicle Euro III at 
+speed of 40 km/h, the vehicle would emit 0.52 g of CO. 
+
+```{r}
+round(ef1(40), 2)
+```
+
